@@ -47,14 +47,12 @@ class FeatureService {
 
 			$settings = $this->configurationManager->getConfiguration('Settings', 'Famelo.Features');
 
-			$features = $this->configurationManager->getConfiguration('Features');
 			$conditionMatcher = new $settings['conditionMatcher']($requestedFeature);
 			$context = new Context($conditionMatcher);
 
-			foreach ($features as $feature) {
-				if ($feature['name'] == $requestedFeature && isset($feature['condition'])) {
-					$this->runtimeCache[$requestedFeature] =  $this->eelEvaluator->evaluate($feature['condition'], $context);
-				}
+			$feature = $this->getFeatureDefinition($requestedFeature);
+			if (isset($feature['condition'])) {
+				$this->runtimeCache[$requestedFeature] =  $this->eelEvaluator->evaluate($feature['condition'], $context);
 			}
 
 			if ($this->runtimeCache[$requestedFeature] === NULL) {
@@ -76,6 +74,17 @@ class FeatureService {
 		}
 
 		return $this->runtimeCache[$requestedFeature];
+	}
+
+	public function getFeatureDefinition($featureName) {
+		$features = $this->configurationManager->getConfiguration('Features');
+
+		foreach ($features as $feature) {
+			if ($feature['name'] == $featureName) {
+				return $feature;
+			}
+		}
+		return NULL;
 	}
 }
 ?>
