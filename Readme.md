@@ -11,40 +11,31 @@ Here's an example:
 
 
 ```yaml
--
-  name: OnyForAdminstators
+OnlyForAdministrators:
   condition: hasRole('My.Package:Administrator')
 
--
-  name: OnlyForMneuhaus
+OnlyForMneuhaus:
   condition: isUser('mneuhaus')
 
--
-  name: OnlyAfterThisDate
+OnlyAfterThisDate:
   condition: afterDate('22.11.2013')
 
--
-  name: onlyGuests
+onlyGuests:
   condition: isGuest()
 
--
-  name: onlyLoggedIn
+onlyLoggedIn:
   condition: isNotGuest()
 
--
-  name: only25PercentOfTheUsers
+only25PercentOfTheUsers:
   condition: userPercentage(25)
 
--
-  name: onlyWithMatchingClientIp
+onlyWithMatchingClientIp:
   condition: clientIp('127.0.0.1')
 
--
-  name: combination
+combination:
   condition: hasRole('My.Package:Administrator') && userPercentage(25)
 
--
-  name: combination2
+combination2:
   condition: hasRole('My.Package:Administrator') || afterDate('22.11.2013')
 ```
 

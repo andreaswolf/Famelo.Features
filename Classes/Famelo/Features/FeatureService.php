@@ -79,10 +79,8 @@ class FeatureService {
 	public function getFeatureDefinition($featureName) {
 		$features = $this->configurationManager->getConfiguration('Features');
 
-		foreach ($features as $feature) {
-			if ($feature['name'] == $featureName) {
-				return $feature;
-			}
+		if (array_key_exists($featureName, $features)) {
+			return $features[$featureName];
 		}
 		return NULL;
 	}
