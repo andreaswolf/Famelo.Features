@@ -8,6 +8,7 @@ namespace Famelo\Features;
 
 use Doctrine\ORM\Mapping as ORM;
 use Famelo\Features\Core\ConditionMatcher;
+use Famelo\Features\Domain\Model\Feature;
 use TYPO3\Eel\Context;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Exception;
@@ -37,6 +38,12 @@ class FeatureService {
 	protected $eelEvaluator;
 
 	/**
+	 * @var \Famelo\Features\Domain\Repository\FeatureRepository
+	 * @Flow\Inject
+	 */
+	protected $featureRepository;
+
+	/**
 	 * @var array
 	 */
 	protected $runtimeCache = array();
@@ -51,8 +58,26 @@ class FeatureService {
 			$context = new Context($conditionMatcher);
 
 			$feature = $this->getFeatureDefinition($requestedFeature);
+			$featureConfiguration = $this->getFeatureConfiguration($requestedFeature);
+
+			if ($featureConfiguration) {
+				switch ($featureConfiguration->getStatus()) {
+					case Feature::STATUS_ENABLED:
+						$this->runtimeCache[$requestedFeature] = TRUE;
+						break;
+					case Feature::STATUS_DISABLED:
+						$this->runtimeCache[$requestedFeature] = FALSE;
+						break;
+					case Feature::STATUS_CUSTOM_CONDITION:
+						$this->runtimeCache[$requestedFeature] = $this->eelEvaluator->evaluate(
+							$featureConfiguration->getCustomCondition(), $context
+						);
+						break;
+					// the hard-coded condition is checked below
+				}
+			}
 			if (isset($feature['condition'])) {
-				$this->runtimeCache[$requestedFeature] =  $this->eelEvaluator->evaluate($feature['condition'], $context);
+				$this->runtimeCache[$requestedFeature] = $this->eelEvaluator->evaluate($feature['condition'], $context);
 			}
 
 			if ($this->runtimeCache[$requestedFeature] === NULL) {
@@ -85,6 +110,22 @@ class FeatureService {
 			}
 		}
 		return NULL;
+	}
+
+	public function isFeatureDefined($featureName) {
+		return $this->getFeatureDefinition($featureName) !== NULL;
+	}
+
+	public function isFeatureConfigured($featureName) {
+		return $this->featureRepository->countByName($featureName) > 0;
+	}
+
+	/**
+	 * @param $featureName
+	 * @return Feature
+	 */
+	public function getFeatureConfiguration($featureName) {
+		return $this->featureRepository->findOneByName($featureName);
 	}
 }
 ?>

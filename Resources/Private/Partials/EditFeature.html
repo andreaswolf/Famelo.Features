@@ -1,0 +1,12 @@
+<li>
+	Description: <f:form.textarea property="description" />
+</li>
+
+<li>
+	Status:<ul>
+		<li><label><f:form.radio property="status" value="0" /> Use hardcoded default condition (<f:if condition="{feature.configuration.condition} != ''"><f:then><span style="font-family:monospace;">{feature.configuration.condition}</span></f:then><f:else>None defined</f:else></f:if>)</label></li>
+		<li><label><f:form.radio property="status" value="1" /> Enabled</label></li>
+		<li><label><f:form.radio property="status" value="2" /> Disabled</label></li>
+		<li><label><f:form.radio property="status" value="3" /> Use custom condition: FIXME add field</label></li>
+	</ul>
+</li>

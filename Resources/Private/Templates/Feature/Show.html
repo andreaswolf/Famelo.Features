@@ -1,0 +1,23 @@
+{namespace feature=Famelo\Features\ViewHelpers}
+
+<f:layout name="Default" />
+
+<f:section name="Title">Show configuration for feature "{feature.name}"</f:section>
+
+<f:section name="Content">
+	<ul>
+		<li>Description: {feature.description -> f:format.nl2br()}</li>
+		<li>Status: <f:switch expression="{feature.status}">
+			<f:case value="0">enabled by default condition</f:case>
+			<f:case value="1">enabled</f:case>
+			<f:case value="2">disabled</f:case>
+			<f:case value="3">enabled by custom condition</f:case>
+		</f:switch></li>
+		<li>Pre-defined condition: <span style="font-family: monospace;">{feature.defaultCondition}</span></li>
+		<f:if condition="{feature.status} == 3">
+			<f:then><li>Custom condition: <span style="font-family: monospace;">{feature.customCondition}</span></li></f:then>
+		</f:if>
+		<li>This features is <i><feature:active feature="{feature.name}"><f:then>enabled</f:then><f:else>disabled</f:else></feature:active></i> for you</li>
+	</ul>
+	<p><f:link.action action="index">All features</f:link.action></p>
+</f:section>

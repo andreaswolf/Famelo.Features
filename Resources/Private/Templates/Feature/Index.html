@@ -1,0 +1,17 @@
+<f:layout name="Default" />
+
+<f:section name="Title">Features</f:section>
+
+<f:section name="Content">
+	<p>Defined features:</p>
+	<ul>
+		<f:for each="{definedFeatures}" as="feature" key="name">
+			<li>{name}:
+				<f:if condition="{feature.configuration}">
+					<f:then><f:link.action action="show" controller="Feature" arguments="{feature: feature.configuration}">Show</f:link.action></f:then>
+					<f:else><f:link.action action="new" controller="Feature" arguments="{feature: feature, name: name}">Create configuration</f:link.action></f:else>
+				</f:if>
+			</li>
+		</f:for>
+	</ul>
+</f:section>
